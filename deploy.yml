@@ -1,7 +1,6 @@
 ---
-# deploy.yml
-  Name : test
-- hosts: localhost
+- name: Creating an EC2 Instance with Creating a VPC and Subnet Id
+  hosts: localhost
   connection: local
   gather_facts: no
   roles:
