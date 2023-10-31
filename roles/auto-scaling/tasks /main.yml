@@ -1,0 +1,29 @@
+---
+# roles/auto-scaling/tasks/main.yml
+
+- name: Retrieve current Auto Scaling Group properties
+  command: "aws --region {{ region }} autoscaling describe-auto-scaling-groups --auto-scaling-group-names webapp"
+  register: asg_properties_result
+
+- name: Set asg_properties variable from JSON output if the Auto Scaling Group already exists
+  set_fact:
+    asg_properties: "{{ (asg_properties_result.stdout | from_json).AutoScalingGroups[0] }}"
+  when: (asg_properties_result.stdout | from_json).AutoScalingGroups | count
+
+- name: Configure Auto Scaling Group and perform rolling deploy
+  ec2_asg:
+    region: "{{ region }}"
+    name: webapp
+    launch_config_name: webapp
+    availability_zones: "{{ zone }}"
+    health_check_type: ELB
+    health_check_period: 300
+    desired_capacity: "{{ asg_properties.DesiredCapacity | default(2) }}"
+    replace_all_instances: yes
+    replace_batch_size: "{{ (asg_properties.DesiredCapacity | default(2) / 4) | round(0, 'ceil') | int }}"
+    min_size: 2
+    max_size: 10
+    load_balancers:
+      - webapp
+    state: present
+  register: asg_result
