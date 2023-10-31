@@ -3,5 +3,6 @@
   hosts: localhost
   connection: local
   roles:
-    - role: launch
+    - role: create-launch-configuration
+
       name: create-launch-configuration
