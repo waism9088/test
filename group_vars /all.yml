@@ -1,0 +1,14 @@
+---
+# group_vars/all.yml
+
+region: us-east-1
+zone: us-east-1a
+keypair: test
+security_groups: sg-063ce874e8eb8b452
+instance_type: m3.medium
+volumes:
+  - device_name: /dev/sda1
+    device_type: gp2
+    volume_size: 20
+    delete_on_termination: true
+domain: YOUR_DOMAIN_NAME
