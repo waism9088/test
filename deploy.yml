@@ -4,4 +4,4 @@
   connection: local
   roles:
     - role: launch
-    - name: create-launch-configuration
+      name: create-launch-configuration
