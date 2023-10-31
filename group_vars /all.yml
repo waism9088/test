@@ -4,6 +4,7 @@
 region: us-east-1
 zone: us-east-1a
 keypair: test
+image_id: ami-05a5f6298acdb05b6
 security_groups: sg-063ce874e8eb8b452
 instance_type: m3.medium
 volumes:
