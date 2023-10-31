@@ -1,8 +1,7 @@
 ---
-- name: Creating an EC2 Instance with Creating a VPC and Subnet Id
+- name: Creating launch
   hosts: localhost
   connection: local
   roles:
-    - create-launch-configuration
-
-
+    - role: launch
+    - name: create-launch-configuration
