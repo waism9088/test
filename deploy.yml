@@ -1,12 +1,10 @@
 ---
 # deploy.yml
-
-
-
+  Name : test
 - hosts: localhost
   connection: local
   gather_facts: no
   roles:
     - create-launch-configuration
-    - auto-scaling
+
 
