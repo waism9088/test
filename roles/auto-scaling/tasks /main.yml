@@ -1,29 +1,51 @@
 ---
-# roles/auto-scaling/tasks/main.yml
 
-- name: Retrieve current Auto Scaling Group properties
-  command: "aws --region {{ region }} autoscaling describe-auto-scaling-groups --auto-scaling-group-names webapp"
-  register: asg_properties_result
+    - name: Create a new VPC 
+      amazon.aws.ec2_vpc_net:
+        name: "Ansible-Test"
+        cidr_block: "{{ cidr_block }}"
+        region: "{{ region }}"
+      register: vpc
+  
+    - name: Create a new Subnet
+      amazon.aws.ec2_vpc_subnet:
+        cidr: "{{ cidr }}"
+        region: "{{ region }}"
+        vpc_id: "{{ vpc.vpc.id }}"
+      register: subnet
+    
+    - name: Create a Security Group  
+      amazon.aws.ec2_security_group:
+        name: "Ansible-Test-Security-Group"
+        description: "Ansible-Testing"
+        vpc_id: "{{ vpc.vpc.id }}"
+        region: "{{ region }}"
+        rules:
+          - proto: tcp
+            ports:
+            - 8090
+            cidr_ip: 0.0.0.0/0
+            rule_desc: "allow all on port 80"
+      register: security_group
+    
+    - ansible.builtin.debug:
+        var: security_group.group_id
 
-- name: Set asg_properties variable from JSON output if the Auto Scaling Group already exists
-  set_fact:
-    asg_properties: "{{ (asg_properties_result.stdout | from_json).AutoScalingGroups[0] }}"
-  when: (asg_properties_result.stdout | from_json).AutoScalingGroups | count
-
-- name: Configure Auto Scaling Group and perform rolling deploy
-  ec2_asg:
-    region: "{{ region }}"
-    name: webapp
-    launch_config_name: webapp
-    availability_zones: "{{ zone }}"
-    health_check_type: ELB
-    health_check_period: 300
-    desired_capacity: "{{ asg_properties.DesiredCapacity | default(2) }}"
-    replace_all_instances: yes
-    replace_batch_size: "{{ (asg_properties.DesiredCapacity | default(2) / 4) | round(0, 'ceil') | int }}"
-    min_size: 2
-    max_size: 10
-    load_balancers:
-      - webapp
-    state: present
-  register: asg_result
+    - ansible.builtin.debug:
+        var: subnet.subnet.id
+    
+    - name: Launch an EC2 Instance
+      amazon.aws.ec2_instance:
+        name: "Test-Ansible"
+        key_name: "{{ key_name }}"
+        vpc_subnet_id: "{{ subnet.subnet.id }}"
+        instance_type: "t2.micro"
+        security_group: "{{ security_group.group_id  }}"
+        exact_count: 1
+        wait: yes
+        aws_region: "ap-south-1"
+        network:
+          assign_public_ip: true
+        image_id: "{{ ami }}"
+        tags:
+          foo: bar
