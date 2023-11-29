@@ -1,5 +1,6 @@
 provider "aws" {
-  region = "ap-southeast-2"
+  region = "us-east-1"
+
 }
 
 data "aws_region" "current_region" {}
@@ -19,6 +20,6 @@ resource "aws_instance" "app_server" {
     Name   = "${local.team}-${local.sap_system}-${local.server_name}"
     Team   = "${local.team}-${local.sap_system}"
     Region = data.aws_region.current_region.name
-    Resource = test-sn
+
   }
 }
