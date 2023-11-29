@@ -1,7 +1,7 @@
 variable "variables_ami" {
   description = "AMI for running t2 micro test Ec2 instance"
   type        = string
-  default     = "ami-00a336abcc01c8cd9"
+  default     = "ami-023c11a32b0207432"
 }
 variable "variables_instance_size" {
   description = "Instance Size"
@@ -11,7 +11,7 @@ variable "variables_instance_size" {
 variable "variables_subnet" {
   description = "Subnet for SAP workload"
   type        = string
-  default     = "subnet-0ce3b7eae67fb1c5d"
+  default     = "subnet-0248699db3e59e6a7"
 }
 variable "environment" {
   description = "enviroment"
