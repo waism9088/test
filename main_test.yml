@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  become: true
+  tasks:
+   - name: Basic deploy of a service
+     community.general.terraform:
+       project_path: ./terraform_sn
+       state: present
