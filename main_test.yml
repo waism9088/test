@@ -10,7 +10,7 @@
   tasks:
 
    - name: Basic deploy of an instance
-     cloud.terraform.terraform:
+     community.general.terraform:
       project_path: ./terraform_sn
       state: present
       force_init: true
