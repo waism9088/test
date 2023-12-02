@@ -1,0 +1,16 @@
+---
+- name: Infrastructure Deployment
+  hosts: localhost
+  collections:
+   - cloud.terraform
+
+  vars:
+    project_dir: /test1/work1
+
+  tasks:
+
+   - name: Basic deploy of an instance
+     cloud.terraform.terraform:
+      project_path: ./
+      state: present
+      force_init: true
